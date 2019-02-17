@@ -1,0 +1,6 @@
+message:
+  resource: '@MessageBundle/Resources/config/routing.yml'
+
+app:
+  resource: '@AppBundle/Controller/'
+  type:   annotation

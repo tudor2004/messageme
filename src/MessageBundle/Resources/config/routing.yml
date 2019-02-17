@@ -1,0 +1,9 @@
+message_list:
+  path:     /messages
+  defaults: { _controller: MessageBundle:Default:index, _format: json }
+  methods:  [GET, HEAD]
+
+message_create:
+  path:     /messages
+  defaults: { _controller: MessageBundle:Default:create, _format: json }
+  methods:  [POST]

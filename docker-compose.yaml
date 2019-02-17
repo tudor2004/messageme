@@ -1,0 +1,65 @@
+version: '3.4'
+
+services:
+  php:
+    image: messageme/php
+    depends_on:
+    - db
+    env_file:
+    - env/.env.app
+    - env/.env.mysql
+    networks:
+      default:
+        aliases:
+        - php
+    environment:
+    - XDEBUG_ENABLE=1
+    - PHP_IDE_CONFIG=serverName=messageme
+    build:
+      context: .
+      dockerfile: ./dockers/php/Dockerfile
+    volumes:
+    - ./:/srv/app:rw,cached
+    - /srv/app/var/
+    - /srv/app/var/cache/
+    - /srv/app/var/logs/
+    - /srv/app/var/sessions/
+
+  nginx:
+    depends_on:
+    - php
+    image: nginx:alpine
+    build:
+      context: .
+      dockerfile: ./dockers/nginx/Dockerfile
+    volumes:
+    - ./dockers/nginx/conf.d:/etc/nginx/conf.d:ro
+    - ./web:/srv/app/web:ro
+    networks:
+      default:
+        aliases:
+        - nginx
+    environment:
+    - VIRTUAL_HOST=messageme.develop
+
+  db:
+    image: mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+    - '3306:3306'
+    env_file:
+    - env/.env.mysql
+    volumes:
+    - ./db_data:/var/lib/mysql
+    networks:
+      default:
+        aliases:
+          - db
+
+  proxy:
+    image: jwilder/nginx-proxy
+    ports:
+    - "80:80"
+    volumes:
+    - /var/run/docker.sock:/tmp/docker.sock:ro
