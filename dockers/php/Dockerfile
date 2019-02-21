@@ -34,7 +34,6 @@ RUN set -eux; \
 	composer clear-cache
 ENV PATH="${PATH}:/root/.composer/vendor/bin"
 
-RUN php -i | grep ENV
 RUN composer install --prefer-dist --no-progress --no-suggest --no-scripts --classmap-authoritative
 COPY dockers/php/php.ini /usr/local/etc/php/php.ini
 
