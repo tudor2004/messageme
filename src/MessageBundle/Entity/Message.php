@@ -71,7 +71,7 @@ class Message
      *
      * @return Message
      */
-    public function setSender(string $sender): Message
+    public function setSender($sender): Message
     {
         $this->sender = $sender;
 
@@ -91,7 +91,7 @@ class Message
      *
      * @return Message
      */
-    public function setBody(string $body): Message
+    public function setBody($body): Message
     {
         $this->body = $body;
 
