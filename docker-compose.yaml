@@ -35,12 +35,12 @@ services:
     volumes:
     - ./dockers/nginx/conf.d:/etc/nginx/conf.d:ro
     - ./web:/srv/app/web:ro
+    ports:
+    - '8888:80'
     networks:
       default:
         aliases:
         - nginx
-    environment:
-    - VIRTUAL_HOST=messageme.develop
 
   db:
     image: mysql:5.7
@@ -56,10 +56,3 @@ services:
       default:
         aliases:
           - db
-
-  proxy:
-    image: jwilder/nginx-proxy
-    ports:
-    - "80:80"
-    volumes:
-    - /var/run/docker.sock:/tmp/docker.sock:ro
