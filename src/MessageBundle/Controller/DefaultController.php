@@ -33,21 +33,26 @@ class DefaultController extends Controller
 
     public function createAction(Request $request)
     {
-        $validator = $this->get('validator');
-
         $message = new Message();
 
-        $message->setSender($request->get('sender'))
-                ->setBody($request->get('body'));
+        $data = json_decode($request->getContent(), true);
 
-        $errors = $validator->validate($message);
+        if(isset($data['sender'])) {
+            $message->setSender($data['sender']);
+        }
+
+        if(isset($data['body'])) {
+            $message->setBody($data['body']);
+        }
+
+        $errors = $this->get('validator')->validate($message);
 
         if (count($errors) > 0) {
             $errorList = [];
 
             /** @var ConstraintViolation $error */
             foreach ($errors as $error) {
-                $errorList[] = $error->getMessage();
+                $errorList[$error->getPropertyPath()] = $error->getMessage();
             }
 
             return new JsonResponse([

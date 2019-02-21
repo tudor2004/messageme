@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container" id="app">
+        <div class="py-5 text-center">
+            <h2>Send me a message!</h2>
+            <p class="lead">Fill in the form below and send me a message.</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-4 order-md-2 mb-4">
+                <form @submit.prevent="handleSubmit" action="{{ path('api_message_create') }}" data-redirect-url="{{ path('list_messages') }}">
+                    <div class="form-group">
+                        <input
+                                type="email"
+                                class="form-control"
+                                placeholder="Email"
+                                v-model="message.sender">
+                        <small v-if="errors.sender" class="text-danger" v-text="errors.sender"></small>
+                    </div>
+                    <div class="form-group">
+                        <textarea
+                                class="form-control"
+                                placeholder="Message"
+                                rows="10"
+                                maxlength="1000"
+                                v-model="message.body">
+                        </textarea>
+                        <small v-if="errors.body" class="text-danger" v-text="errors.body"></small>
+                    </div>
+                    <button type="submit" :disabled="loading" class="btn btn-block btn-outline-success">Send</button>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                message: {
+                    sender: '',
+                    body: '',
+                },
+                errors: {
+                    sender: null,
+                    body: null,
+                },
+                loading: false,
+            },
+            methods: {
+                handleSubmit(e) {
+                    this.loading = true;
+                    var redirectUrl = e.target.attributes['data-redirect-url'].value;
+                    this.resetErrors();
+                    this.$http.post(e.target.action, {
+                        sender: this.message.sender,
+                        body: this.message.body
+                    }).then(response => {
+                        window.location.href = redirectUrl;
+                    }, response => {
+                        this.loading = false;
+                        if (response.body.errors['sender'] && response.body.errors['sender'].length) {
+                            this.errors.sender = response.body.errors['sender'];
+                        }
+
+                        if (response.body.errors['body'] && response.body.errors['body'].length) {
+                            this.errors.body = response.body.errors['body'];
+                        }
+                    });
+                },
+                resetErrors() {
+                    this.errors = {
+                        sender: null,
+                        body: null
+                    };
+                }
+            }
+        })
+    </script>
+{% endblock %}
+
+{% block stylesheets %}
+
+{% endblock %}

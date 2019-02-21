@@ -35,7 +35,7 @@ class MessageRepository implements MessageRepositoryContract
      */
     public function findAll(): array
     {
-        return $this->objectRepo->findAll();
+        return $this->objectRepo->findBy([], ['id' => 'DESC']);
     }
 
     /**
