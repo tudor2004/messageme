@@ -16,11 +16,11 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'bin/console' ]; then
 	mkdir -p var/cache var/log
 	chown -R www-data var
 
-	php bin/console doctrine:migrations:migrate
-
-	if [ "$APP_ENV" == 'dev' ]; then
+    if [ "$APP_ENV" == 'dev' ]; then
 		bin/setup
 	fi
+
+	php bin/console doctrine:migrations:migrate
 fi
 
 exec docker-php-entrypoint "$@"
